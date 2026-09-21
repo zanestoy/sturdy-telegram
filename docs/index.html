@@ -126,6 +126,29 @@
 
     .check-row input { width: auto; }
 
+	.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 14px;
+  max-height: 260px;
+  overflow: auto;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.checkbox-grid label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-weight: 400;
+}
+
+.checkbox-grid input {
+  width: auto;
+}
+
     .hint {
       margin: 6px 0 0;
       color: var(--muted);
@@ -133,15 +156,14 @@
     }
 
     .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      padding: 16px 20px;
-      border-top: 1px solid var(--border);
-      background: #fbfcfe;
-      position: sticky;
-      bottom: 0;
-    }
+	  display: flex;
+	  flex-wrap: wrap;
+	  gap: 10px;
+	  margin-top: 16px;
+	  padding: 16px 0 0;
+	  border-top: 1px solid var(--border);
+	  background: transparent;
+	}
 
     button {
       border: 1px solid var(--dt-blue);
@@ -238,7 +260,6 @@
 <body>
   <header>
     <h1>Dome Technology Email Signature Generator</h1>
-    <p>Fill in the employee information, review the signature, then copy the formatted version into Outlook, iPhone Mail, or Thunderbird signature settings. Phone numbers are normalized to +X XXX XXX XXXX and made clickable where supported.</p>
   </header>
 
   <main>
@@ -247,12 +268,32 @@
       <div class="panel-body">
         <fieldset>
           <legend>Employee</legend>
+		  <label for="officeLocation">Office location</label>
+			<select id="officeLocation" data-default="idahoFalls">
+			  <option value="idahoFalls">Idaho Falls, Idaho</option>
+			  <option value="atlanta">Atlanta, Georgia</option>
+			  <option value="european">Europe</option>
+			  <option value="custom">Custom / other</option>
+			</select>
+
+			<div id="customOfficeFields">
+			  <label for="officePhone">Office phone</label>
+			  <input id="officePhone" value="+1 208 529 0833" inputmode="tel" autocomplete="tel" pattern="^\+\d \d{3} \d{3} \d{4}$" maxlength="15" data-default="+1 208 529 0833">
+
+			  <label for="address1">Office address</label>
+			  <input id="address1" value="4946 North 2900 East" data-default="4946 North 2900 East">
+
+			  <label for="address2">City / state / postal</label>
+			  <input id="address2" value="Idaho Falls Idaho 83401" data-default="Idaho Falls Idaho 83401">
+
+			  <label for="country">Country</label>
+			  <input id="country" value="USA" data-default="USA">
+			</div>
+		  
           <label for="signoff">Signoff line</label>
           <input id="signoff" value="Kind Regards," data-default="Kind Regards,">
 
-          <label for="handwrittenUrl">Optional handwritten-signature image URL</label>
-          <input id="handwrittenUrl" placeholder="https://.../signature.png" data-default="">
-          <p class="hint">Use a hosted PNG/JPG URL. Leave blank to omit.</p>
+
 
           <label for="fullName">Full name and credentials</label>
           <input id="fullName" placeholder="Full Name" data-default="">
@@ -260,10 +301,63 @@
           <label for="title">Title</label>
           <input id="title" placeholder="Title" data-default="">
 		  
-		  <label for="professionalRegistration">Professional registration note</label>
-          <input id="professionalRegistration" placeholder="* P.E. registered in Idaho, Utah, Wyoming" data-default="">
-          <p class="hint">Optional. If filled in, an asterisk is added after the employee name and this note is shown below the signature contact block.</p>
+<details>
+  <summary>Professional registration states</summary>
+  <p class="hint">Optional. Select each state where the employee is professionally registered.</p>
 
+  <div id="registrationStates" class="checkbox-grid" aria-label="Professional registration states">
+  <label><input type="checkbox" name="registrationStates" value="AL"> Alabama</label>
+  <label><input type="checkbox" name="registrationStates" value="AK"> Alaska</label>
+  <label><input type="checkbox" name="registrationStates" value="AZ"> Arizona</label>
+  <label><input type="checkbox" name="registrationStates" value="AR"> Arkansas</label>
+  <label><input type="checkbox" name="registrationStates" value="CA"> California</label>
+  <label><input type="checkbox" name="registrationStates" value="CO"> Colorado</label>
+  <label><input type="checkbox" name="registrationStates" value="CT"> Connecticut</label>
+  <label><input type="checkbox" name="registrationStates" value="DE"> Delaware</label>
+  <label><input type="checkbox" name="registrationStates" value="FL"> Florida</label>
+  <label><input type="checkbox" name="registrationStates" value="GA"> Georgia</label>
+  <label><input type="checkbox" name="registrationStates" value="HI"> Hawaii</label>
+  <label><input type="checkbox" name="registrationStates" value="ID"> Idaho</label>
+  <label><input type="checkbox" name="registrationStates" value="IL"> Illinois</label>
+  <label><input type="checkbox" name="registrationStates" value="IN"> Indiana</label>
+  <label><input type="checkbox" name="registrationStates" value="IA"> Iowa</label>
+  <label><input type="checkbox" name="registrationStates" value="KS"> Kansas</label>
+  <label><input type="checkbox" name="registrationStates" value="KY"> Kentucky</label>
+  <label><input type="checkbox" name="registrationStates" value="LA"> Louisiana</label>
+  <label><input type="checkbox" name="registrationStates" value="ME"> Maine</label>
+  <label><input type="checkbox" name="registrationStates" value="MD"> Maryland</label>
+  <label><input type="checkbox" name="registrationStates" value="MA"> Massachusetts</label>
+  <label><input type="checkbox" name="registrationStates" value="MI"> Michigan</label>
+  <label><input type="checkbox" name="registrationStates" value="MN"> Minnesota</label>
+  <label><input type="checkbox" name="registrationStates" value="MS"> Mississippi</label>
+  <label><input type="checkbox" name="registrationStates" value="MO"> Missouri</label>
+  <label><input type="checkbox" name="registrationStates" value="MT"> Montana</label>
+  <label><input type="checkbox" name="registrationStates" value="NE"> Nebraska</label>
+  <label><input type="checkbox" name="registrationStates" value="NV"> Nevada</label>
+  <label><input type="checkbox" name="registrationStates" value="NH"> New Hampshire</label>
+  <label><input type="checkbox" name="registrationStates" value="NJ"> New Jersey</label>
+  <label><input type="checkbox" name="registrationStates" value="NM"> New Mexico</label>
+  <label><input type="checkbox" name="registrationStates" value="NY"> New York</label>
+  <label><input type="checkbox" name="registrationStates" value="NC"> North Carolina</label>
+  <label><input type="checkbox" name="registrationStates" value="ND"> North Dakota</label>
+  <label><input type="checkbox" name="registrationStates" value="OH"> Ohio</label>
+  <label><input type="checkbox" name="registrationStates" value="OK"> Oklahoma</label>
+  <label><input type="checkbox" name="registrationStates" value="OR"> Oregon</label>
+  <label><input type="checkbox" name="registrationStates" value="PA"> Pennsylvania</label>
+  <label><input type="checkbox" name="registrationStates" value="RI"> Rhode Island</label>
+  <label><input type="checkbox" name="registrationStates" value="SC"> South Carolina</label>
+  <label><input type="checkbox" name="registrationStates" value="SD"> South Dakota</label>
+  <label><input type="checkbox" name="registrationStates" value="TN"> Tennessee</label>
+  <label><input type="checkbox" name="registrationStates" value="TX"> Texas</label>
+  <label><input type="checkbox" name="registrationStates" value="UT"> Utah</label>
+  <label><input type="checkbox" name="registrationStates" value="VT"> Vermont</label>
+  <label><input type="checkbox" name="registrationStates" value="VA"> Virginia</label>
+  <label><input type="checkbox" name="registrationStates" value="WA"> Washington</label>
+  <label><input type="checkbox" name="registrationStates" value="WV"> West Virginia</label>
+  <label><input type="checkbox" name="registrationStates" value="WI"> Wisconsin</label>
+  <label><input type="checkbox" name="registrationStates" value="WY"> Wyoming</label>
+</div>
+</details>
           <div class="grid-2">
             <div>
               <label for="employeePhoneLabel">Phone label</label>
@@ -277,10 +371,9 @@
             <div>
               <label for="employeePhone">Employee phone</label>
               <input id="employeePhone" placeholder="+1 XXX XXX XXXX" inputmode="tel" autocomplete="tel" pattern="^\+\d \d{3} \d{3} \d{4}$" maxlength="15" data-default="">
-              <p class="hint">Numbers are normalized to +X XXX XXX XXXX. Ten digits are assumed to be +1.</p>
             </div>
           </div>
-
+<p class="hint">For U.S. numbers, enter 10 digits or use +1 XXX XXX XXXX. For international numbers, enter the full number with country code.</p>
           <label for="employeeEmail">Employee email</label>
           <input id="employeeEmail" type="text" placeholder="Leave blank for automatic first.last@dometechnology.com, or enter an override" data-default="">
 
@@ -288,85 +381,13 @@
           <input id="employeeLinkedIn" placeholder="https://www.linkedin.com/in/..." data-default="">
         </fieldset>
 
-<!--
-        <fieldset>
-          <legend>Hosted image helper</legend>
-          <label for="imageBaseUrl">Image folder or base URL</label>
-          <input id="imageBaseUrl" placeholder="https://.../EmailSignatures/" data-default="">
-          <p class="hint">Optional. Paste a public HTTPS folder/base path, then enter file names below. A normal SharePoint sharing-folder link may not be a direct image URL, so test each generated image URL before rollout.</p>
 
-          <div class="grid-2">
-            <div>
-              <label for="logoFilename">Logo file name</label>
-              <input id="logoFilename" placeholder="dome-technology-logo.png" data-default="">
-            </div>
-            <div>
-              <label for="linkedInIconFilename">LinkedIn icon file name</label>
-              <input id="linkedInIconFilename" placeholder="https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg" data-default="">
-            </div>
-          </div>
-
-          <label for="handwrittenFilename">Optional handwritten-signature file name</label>
-          <input id="handwrittenFilename" placeholder="zane-signature.png" data-default="">
-
-          <button id="applyImageBase" class="secondary inline-button" type="button">Fill image URL fields</button>
-        </fieldset>
--->
 		<fieldset>
           <legend>Company</legend>
-          <label for="logoUrl">Dome Technology logo image URL</label>
-          <input id="logoUrl" placeholder="https://zanestoy.github.io/sturdy-telegram/assets/logo.png" data-default="https://zanestoy.github.io/sturdy-telegram/assets/logo.png">
-          <p class="hint">Use the official dark-blue logo on white background. If blank, a text fallback is shown.</p>
 
-          <div class="grid-2">
-            <div>
-              <label for="logoWidth">Logo width</label>
-              <input id="logoWidth" type="number" min="80" max="320" value="160" data-default="160">
-            </div>
-            <div>
-              <label for="mainFontSize">Main font size, pt</label>
-              <input id="mainFontSize" type="number" min="8" max="16" value="12" data-default="12">
-            </div>
-          </div>
 
-          <label for="companyName">Company name</label>
-          <input id="companyName" value="Dome Technology" data-default="Dome Technology">
 
-          <div class="grid-2">
-            <div>
-              <label for="officePhone">Office phone</label>
-              <input id="officePhone" value="+1 208 529 0833" inputmode="tel" autocomplete="tel" pattern="^\+\d \d{3} \d{3} \d{4}$" maxlength="15" data-default="+1 208 529 0833">
-              <p class="hint">This will be linked as a click-to-call number in the generated signature.</p>
-            </div>
-            <div>
-              <label for="companyLinkedIn">Company LinkedIn URL</label>
-              <input id="companyLinkedIn" value="https://www.linkedin.com/company/dome-technology-llp" placeholder="https://www.linkedin.com/company/..." data-default="https://www.linkedin.com/company/dome-technology-llp">
-            </div>
-          </div>
 
-          <label for="address1">Office address</label>
-          <input id="address1" value="4946 North 2900 East" data-default="4946 North 2900 East">
-
-          <div class="grid-2">
-            <div>
-              <label for="address2">City / state / postal</label>
-              <input id="address2" value="Idaho Falls Idaho 83401" data-default="Idaho Falls Idaho 83401">
-            </div>
-            <div>
-              <label for="country">Country</label>
-              <input id="country" value="USA" data-default="USA">
-            </div>
-          </div>
-
-          <label for="websiteText">Website display text</label>
-          <input id="websiteText" value="dometechnology.com" data-default="dometechnology.com">
-
-          <label for="websiteUrl">Website URL</label>
-          <input id="websiteUrl" value="https://www.dometechnology.com/" data-default="https://www.dometechnology.com/">
-
-          <label for="linkedInIconUrl">LinkedIn icon image URL</label>
-		  <input id="linkedInIconUrl" placeholder="https://zanestoy.github.io/sturdy-telegram/assets/LinkedIn.png" data-default="https://zanestoy.github.io/sturdy-telegram/assets/LinkedIn.png">
-          <p class="hint">If blank, the generator uses a text link instead of an icon.</p>
         </fieldset>
 
         <fieldset>
@@ -375,20 +396,7 @@
             <input id="includeDisclaimer" type="checkbox" checked data-default="checked">
             <label for="includeDisclaimer" style="margin:0;">Include confidentiality notice and disclaimer</label>
           </div>
-
-          <label for="confidentialityText">Confidentiality notice</label>
-          <textarea id="confidentialityText" data-default="CONFIDENTIALITY NOTICE – This message (including any attachments) may contain confidential, proprietary, privileged and/or private information. The information is intended to be for the use of the individual or entity designated above. If you are not the intended recipient of this message, please notify the sender immediately, and delete the message and any attachments. Any disclosure, reproduction, distribution or other use of this message or any attachments by an individual or entity other than the intended recipient is prohibited.">CONFIDENTIALITY NOTICE – This message (including any attachments) may contain confidential, proprietary, privileged and/or private information. The information is intended to be for the use of the individual or entity designated above. If you are not the intended recipient of this message, please notify the sender immediately, and delete the message and any attachments. Any disclosure, reproduction, distribution or other use of this message or any attachments by an individual or entity other than the intended recipient is prohibited.</textarea>
-
-          <label for="disclaimerText">Disclaimer</label>
-          <textarea id="disclaimerText" data-default="DISCLAIMER – The accompanying files are supplied as a matter of courtesy and are in no way to be taken as appurtenant to, associated with or as a replacement of copies of the officially sealed documents, unless noted as such. The data is provided &quot;as is&quot; without warranty of any kind either expressed or implied. Any person(s) or organization(s) making use of or relying upon this data, is responsible for confirming its accuracy and completeness. These files may not include a professional surveyor's/engineer's stamp and only drawings with such stamp are to be considered as true and final. Dome Technology is not responsible for edited or reproduced versions of this digital data.">DISCLAIMER – The accompanying files are supplied as a matter of courtesy and are in no way to be taken as appurtenant to, associated with or as a replacement of copies of the officially sealed documents, unless noted as such. The data is provided "as is" without warranty of any kind either expressed or implied. Any person(s) or organization(s) making use of or relying upon this data, is responsible for confirming its accuracy and completeness. These files may not include a professional surveyor's/engineer's stamp and only drawings with such stamp are to be considered as true and final. Dome Technology is not responsible for edited or reproduced versions of this digital data.</textarea>
         </fieldset>
-      </div>
-
-      <div class="actions">
-        <button id="copyFormatted" type="button">Copy formatted signature</button>
-        <button id="copyHtml" class="secondary" type="button">Copy HTML</button>
-        <button id="copyPlain" class="secondary" type="button">Copy plain text</button>
-        <button id="reset" class="warning" type="button">Reset defaults</button>
       </div>
     </section>
 
@@ -410,22 +418,24 @@
 
         <details>
           <summary>Installation notes</summary>
-          <p>For best results, use <strong>Copy formatted signature</strong> and paste into the email client's signature editor. If images do not appear after pasting, confirm the logo, handwritten-signature image, and LinkedIn icon are hosted at HTTPS URLs that open for the intended recipients without a sign-in prompt.</p>
-          <p>Telephone numbers are generated as <code>tel:</code> links, so supported phones and calling apps can open the dialer from the signature.</p>
-          <p>Email clients handle HTML differently. This generator uses table-based layout and inline styles because they are more dependable across Outlook, Apple Mail on iPhone, and Thunderbird than modern web layouts.</p>
-          <p>SharePoint can be used as the source location only if each image has a reliable direct file URL and the sharing permissions allow the image to load. Test the copied signature by sending it to internal and external recipients before rollout.</p>
-          <p>Keep the final signature lean. Large images and long disclaimers can make email threads difficult to read, especially on phones.</p>
+          <p>For best results, use <strong>Copy formatted signature</strong> and paste into the email client's signature editor. If images do not appear after pasting, confirm the logo and LinkedIn icon are hosted at HTTPS URLs that open for the intended recipients without a sign-in prompt.</p>
         </details>
+		<div class="actions">
+		  <button id="copyFormatted" type="button">Copy formatted signature</button>
+		  <button id="copyHtml" class="secondary" type="button">Copy HTML</button>
+		  <button id="copyPlain" class="secondary" type="button">Copy plain text</button>
+		  <button id="reset" class="warning" type="button">Reset defaults</button>
+		</div>
       </div>
     </section>
   </main>
 
   <script>
-    const ids = [
-      'signoff','handwrittenUrl','fullName','professionalRegistration','title','employeePhoneLabel','employeePhone','employeeEmail','employeeLinkedIn',
-      'imageBaseUrl','logoFilename','linkedInIconFilename','handwrittenFilename','logoUrl','logoWidth','mainFontSize','companyName','officePhone','companyLinkedIn','address1','address2','country',
-      'websiteText','websiteUrl','linkedInIconUrl','includeDisclaimer','confidentialityText','disclaimerText'
-    ];
+const ids = [
+  'signoff','fullName','title','employeePhoneLabel','employeePhone','employeeEmail','employeeLinkedIn',
+  'officePhone','address1','address2','country',
+  'includeDisclaimer','officeLocation'
+];
 
     const BRAND = {
       blue: '#003366',
@@ -434,6 +444,51 @@
       text: '#111827',
       muted: '#4b5563'
     };
+	
+const COMPANY_ASSETS = {
+  companyName: 'Dome Technology',
+  logoUrl: 'https://zanestoy.github.io/sturdy-telegram/assets/logo.png',
+  linkedInIconUrl: 'https://zanestoy.github.io/sturdy-telegram/assets/LinkedIn.png',
+  companyLinkedInUrl: 'https://www.linkedin.com/company/dome-technology-llp',
+  websiteText: 'dometechnology.com',
+  websiteUrl: 'https://www.dometechnology.com/',
+  logoWidth: 240,
+  mainFontSize: 12,
+  confidentialityText: `CONFIDENTIALITY NOTICE – This message (including any attachments) may contain confidential, proprietary, privileged and/or private information. The information is intended to be for the use of the individual or entity designated above. If you are not the intended recipient of this message, please notify the sender immediately, and delete the message and any attachments. Any disclosure, reproduction, distribution or other use of this message or any attachments by an individual or entity other than the intended recipient is prohibited.`,
+  disclaimerText: `DISCLAIMER – The accompanying files are supplied as a matter of courtesy and are in no way to be taken as appurtenant to, associated with or as a replacement of copies of the officially sealed documents, unless noted as such. The data is provided "as is" without warranty of any kind either expressed or implied. Any person(s) or organization(s) making use of or relying upon this data, is responsible for confirming its accuracy and completeness. These files may not include a professional surveyor's/engineer's stamp and only drawings with such stamp are to be considered as true and final. Dome Technology is not responsible for edited or reproduced versions of this digital data.`
+};
+
+const OFFICES = {
+  idahoFalls: {
+    phone: '+1 208 529 0833',
+    address1: '4946 North 2900 East',
+    address2: 'Idaho Falls Idaho 83401',
+    country: 'USA'
+  },
+  atlanta: {
+    phone: '+1 208 529 0833',
+    address1: '130 E Main Street, Suite 317',
+    address2: 'Canton, GA 30114',
+    country: 'United States of America'
+  },
+  european: {
+	phone: '+34 615 18 28 45',
+	address1: 'Marie Curie 7, Beta building, 7th floor, penthouse Nº4',
+	address2: '28521 Rivas Vaciamadrid',
+	country: 'Madrid, Spain'
+	}
+};
+
+function selectedRegistrationStates() {
+  return Array.from(document.querySelectorAll('input[name="registrationStates"]:checked'))
+    .map(box => box.value);
+}
+
+function registrationText() {
+  const states = selectedRegistrationStates();
+  if (!states.length) return '';
+  return `Registered in ${states.join(', ')}`;
+}
 
     function el(id) { return document.getElementById(id); }
 
@@ -498,10 +553,10 @@
     }
 
     function telHref(input) {
-      const display = formatPhoneNumber(input);
-      if (!/^\+\d \d{3} \d{3} \d{4}$/.test(display)) return '';
-      return 'tel:+' + display.replace(/\D/g, '');
-    }
+  const digits = String(input || '').replace(/\D/g, '');
+  if (!digits) return '';
+  return 'tel:+' + digits;
+}
 
     function normalizePhoneField(id) {
       const node = el(id);
@@ -511,13 +566,18 @@
     }
 
     function validatePhoneFields() {
-      const issues = [];
-      const labels = { employeePhone: 'Employee phone', officePhone: 'Office phone' };
-      ['employeePhone', 'officePhone'].forEach(id => {
-        if (value(id) && !isCompletePhone(value(id))) issues.push(`${labels[id]} must use +X XXX XXX XXXX.`);
-      });
-      return issues;
-    }
+  const issues = [];
+
+  if (value('employeePhone') && !isCompletePhone(value('employeePhone'))) {
+    issues.push('Employee phone must use +X XXX XXX XXXX.');
+  }
+
+  if (value('officeLocation') === 'custom' && value('officePhone') && !isCompletePhone(value('officePhone'))) {
+    issues.push('Custom office phone must use +X XXX XXX XXXX.');
+  }
+
+  return issues;
+}
 
     function prepareForCopy() {
       ['employeePhone', 'officePhone'].forEach(normalizePhoneField);
@@ -531,36 +591,12 @@
     }
 
     function phoneLinkHtml(input, extraStyle = '') {
-      const display = formatPhoneNumber(input) || String(input || '');
-      const href = telHref(display);
-      if (!href) return htmlEscape(display);
-      return `<a href="${attrEscape(href)}" style="color:${BRAND.text}; text-decoration:none; ${extraStyle}">${htmlEscape(display)}</a>`;
-    }
-
-    function joinUrl(base, fileName) {
-      const cleanBase = String(base || '').trim();
-      const cleanFile = String(fileName || '').trim();
-      if (!cleanFile) return '';
-      if (/^https?:\/\//i.test(cleanFile)) return cleanFile;
-      if (!cleanBase) return cleanFile;
-      return cleanBase.replace(/\/+$/, '') + '/' + cleanFile.replace(/^\/+/, '');
-    }
-
-    function applyImageBase() {
-      const base = value('imageBaseUrl');
-      if (!base) {
-        setStatus('Paste an image folder or base URL first.');
-        return;
-      }
-      const logo = joinUrl(base, value('logoFilename'));
-      const icon = joinUrl(base, value('linkedInIconFilename'));
-      const handwritten = joinUrl(base, value('handwrittenFilename'));
-      if (logo) el('logoUrl').value = logo;
-      if (icon) el('linkedInIconUrl').value = icon;
-      if (handwritten) el('handwrittenUrl').value = handwritten;
-      render();
-      setStatus('Image URL fields filled from the base URL. Test the final signature before rollout.');
-    }
+  const raw = String(input || '').trim();
+  const display = raw.startsWith('+') ? raw : (formatPhoneNumber(raw) || raw);
+  const href = telHref(display);
+  if (!href) return htmlEscape(display);
+  return `<a href="${attrEscape(href)}" style="color:${BRAND.text}; text-decoration:none; ${extraStyle}">${htmlEscape(display)}</a>`;
+}
 
     function linkHtml(url, text, extraStyle = '') {
       const safeUrl = attrEscape(url);
@@ -583,13 +619,8 @@
     }
 
     function logoBlock() {
-      const logoUrl = valueOrDefault('logoUrl');
-      const logoWidth = value('logoWidth') || '160';
-      if (logoUrl) {
-        return imageHtml(logoUrl, 'Dome Technology', logoWidth, 'margin:0 0 10px 0;');
-      }
-      return `<div style="font-family:Avenir, Aptos, Arial, sans-serif; color:${BRAND.blue}; font-size:16pt; font-weight:700; letter-spacing:1.2px; margin:0 0 10px 0;">DOME TECHNOLOGY</div>`;
-    }
+  return imageHtml(COMPANY_ASSETS.logoUrl, 'Dome Technology', COMPANY_ASSETS.logoWidth, 'margin:0 0 10px 0;');
+}
 
 	function cleanEmail(input) {
   return String(input || '')
@@ -629,38 +660,56 @@
 	  return emailFromName(value('fullName')) || 'first.last@dometechnology.com';
 	}
 
+function selectedOffice() {
+  const selected = value('officeLocation') || 'idahoFalls';
+
+  if (selected === 'custom') {
+    return {
+      phone: phoneDisplay('officePhone', '+1 208 529 0833'),
+      address1: value('address1') || '4946 North 2900 East',
+      address2: value('address2') || 'Idaho Falls Idaho 83401',
+      country: value('country') || 'USA'
+    };
+  }
+
+  return OFFICES[selected] || OFFICES.idahoFalls;
+}
+
+function updateOfficeFieldVisibility() {
+  const wrapper = el('customOfficeFields');
+  if (!wrapper) return;
+
+  wrapper.style.display = value('officeLocation') === 'custom' ? 'block' : 'none';
+}
+
     function buildSignatureHtml() {
       const signoff = value('signoff');
-      const handwrittenUrl = value('handwrittenUrl');
       const fullName = textOrPlaceholder('fullName', 'Full Name, Credentials');
-	  const professionalRegistration = value('professionalRegistration');
-	  const registrationMarkerHtml = professionalRegistration ? '<sup style="font-size:7pt; line-height:0;">*</sup>' : '';
-	  const registrationNoteText = professionalRegistration
-	    ? (professionalRegistration.trim().startsWith('*') ? professionalRegistration.trim() : `${professionalRegistration.trim()}`)
-	    : '';
+const registrationNoteText = registrationText();
+const registrationMarkerHtml = registrationNoteText ? '<sup style="font-size:7pt; line-height:0;">*</sup>' : '';
       const title = textOrPlaceholder('title', 'Title');
       const employeePhoneLabel = value('employeePhoneLabel') || 'Phone';
       const employeePhone = phoneDisplay('employeePhone', '+1 xxx xxx xxxx');
 	  const employeeEmail = employeeEmailAddress();
       const employeeLinkedIn = value('employeeLinkedIn');
-      const companyName = value('companyName') || 'Dome Technology';
-      const officePhone = phoneDisplay('officePhone', '+1 208 529 0833');
-      const address1 = value('address1') || '4946 North 2900 East';
-      const address2 = value('address2') || 'Idaho Falls Idaho 83401';
-      const country = value('country') || 'USA';
-      const websiteText = value('websiteText') || 'dometechnology.com';
-      const websiteUrl = value('websiteUrl') || 'https://www.dometechnology.com/';
-      const companyLinkedIn = value('companyLinkedIn');
-      const linkedInIconUrl = valueOrDefault('linkedInIconUrl');
-      const includeDisclaimer = value('includeDisclaimer');
-      const confidentialityText = value('confidentialityText');
-      const disclaimerText = value('disclaimerText');
-      const mainFontSize = Math.max(8, Math.min(16, parseInt(value('mainFontSize') || '12', 10)));
-      const smallFontSize = Math.max(7, mainFontSize - 3);
+      const companyName = COMPANY_ASSETS.companyName;
+const office = selectedOffice();
+const officePhone = office.phone;
+const address1 = office.address1;
+const address2 = office.address2;
+const country = office.country;
+const websiteText = COMPANY_ASSETS.websiteText;
+const websiteUrl = COMPANY_ASSETS.websiteUrl;
+      const companyLinkedIn = COMPANY_ASSETS.companyLinkedInUrl;
+      const linkedInIconUrl = COMPANY_ASSETS.linkedInIconUrl;
+const includeDisclaimer = value('includeDisclaimer');
+const confidentialityText = COMPANY_ASSETS.confidentialityText;
+const disclaimerText = COMPANY_ASSETS.disclaimerText;
+const mainFontSize = COMPANY_ASSETS.mainFontSize;
+const smallFontSize = Math.max(7, mainFontSize - 3);
 
       const employeeLinkedInHtml = employeeLinkedIn ? ` <span style="color:${BRAND.silver};">|</span> ${linkedInLink(employeeLinkedIn, linkedInIconUrl)}` : '';
       const companyLinkedInHtml = companyLinkedIn ? ` <span style="color:${BRAND.silver};">|</span> ${linkedInLink(companyLinkedIn, linkedInIconUrl)}` : '';
-      const handwrittenHtml = handwrittenUrl ? `<tr><td style="padding:0 0 6px 0;">${imageHtml(handwrittenUrl, 'Signature', 130)}</td></tr>` : '';
       const signoffHtml = signoff ? `<tr><td style="padding:0 0 8px 0; color:${BRAND.text}; font-family:Avenir, Aptos, Arial, sans-serif; font-size:${mainFontSize}pt; line-height:1.25;">${htmlEscape(signoff)}</td></tr>` : '';
 
       const disclaimerHtml = includeDisclaimer ? `
@@ -690,7 +739,7 @@
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; font-family:Avenir, Aptos, Arial, sans-serif; color:${BRAND.text};">
   <tbody>
     ${signoffHtml}
-    ${handwrittenHtml}
+
     <tr><td style="padding:0 0 7px 0;">${logoBlock()}</td></tr>
     <tr>
       <td style="padding:0; font-family:Avenir, Aptos, Arial, sans-serif; font-size:${mainFontSize}pt; line-height:1.25; color:${BRAND.text};">
@@ -732,23 +781,26 @@
       lines.push(`${value('employeePhoneLabel') || 'Phone'}: ${phoneDisplay('employeePhone', '+1 xxx xxx xxxx')}`);
       lines.push(employeeEmailAddress());
       lines.push('');
-      lines.push(`${value('companyName') || 'Dome Technology'} | Office ${phoneDisplay('officePhone', '+1 208 529 0833')} | ${value('address1') || '4946 North 2900 East'}`);
-      lines.push(`${value('address2') || 'Idaho Falls Idaho 83401'} | ${value('country') || 'USA'} | visit ${value('websiteUrl') || 'https://www.dometechnology.com/'}`);
-      if (value('companyLinkedIn')) lines.push(`Company LinkedIn: ${value('companyLinkedIn')}`);
-      if (value('professionalRegistration')) {
-  const note = value('professionalRegistration').trim();
-  lines.push(note.startsWith('*') ? note : `*Registered in ${note}`);
+      const office = selectedOffice();
+	  lines.push(`${COMPANY_ASSETS.companyName} | Office ${office.phone} | ${office.address1}`);
+lines.push(`${office.address2} | ${office.country} | visit ${COMPANY_ASSETS.websiteUrl}`);
+lines.push(`Company LinkedIn: ${COMPANY_ASSETS.companyLinkedInUrl}`);
+
+const plainRegistrationText = registrationText();
+if (plainRegistrationText) {
+  lines.push('');
+  lines.push(`*Professional registration: ${plainRegistrationText}`);
 }
 		lines.push('');
 		lines.push('By replying to this email, your personal data will be processed in accordance with our Privacy Policy: https://www.dometechnology.com/cookies-policy/');
 
 	  
-	  if (value('includeDisclaimer')) {
-        lines.push('');
-        lines.push(value('confidentialityText'));
-        lines.push('');
-        lines.push(value('disclaimerText'));
-      }
+	if (value('includeDisclaimer')) {
+	  lines.push('');
+	  lines.push(COMPANY_ASSETS.confidentialityText);
+	  lines.push('');
+	  lines.push(COMPANY_ASSETS.disclaimerText);
+	}
       return lines.filter(line => line !== undefined && line !== null).join('\n');
     }
 
@@ -813,67 +865,112 @@
     }
 
     function saveState() {
-      const data = {};
-      ids.forEach(id => {
-        const node = el(id);
-        if (!node) return;
-        data[id] = node.type === 'checkbox' ? node.checked : node.value;
-      });
-      localStorage.setItem('domeEmailSignatureGenerator', JSON.stringify(data));
-    }
+  const data = {};
 
-    function loadState() {
-      try {
-        const data = JSON.parse(localStorage.getItem('domeEmailSignatureGenerator') || '{}');
-        ids.forEach(id => {
-          const node = el(id);
-          if (!node || !(id in data)) return;
-          if (node.type === 'checkbox') node.checked = !!data[id];
-          else node.value = data[id];
-        });
-      } catch (err) {
-        // Ignore invalid local storage.
-      }
-    }
+  ids.forEach(id => {
+    const node = el(id);
+    if (!node) return;
 
-    function resetDefaults() {
-      ids.forEach(id => {
-        const node = el(id);
-        if (!node) return;
-        if (node.type === 'checkbox') node.checked = node.dataset.default === 'checked';
-        else node.value = node.dataset.default || '';
-      });
-      localStorage.removeItem('domeEmailSignatureGenerator');
-      render();
-      setStatus('Defaults restored.');
+    if (node.multiple) {
+      data[id] = Array.from(node.selectedOptions).map(option => option.value);
+    } else {
+      data[id] = node.type === 'checkbox' ? node.checked : node.value;
     }
+  });
+
+data.registrationStates = selectedRegistrationStates();
+
+  localStorage.setItem('domeEmailSignatureGenerator', JSON.stringify(data));
+}
+
+   function loadState() {
+  try {
+    const data = JSON.parse(localStorage.getItem('domeEmailSignatureGenerator') || '{}');
 
     ids.forEach(id => {
       const node = el(id);
-      if (!node) return;
-      node.addEventListener('input', render);
-      node.addEventListener('change', render);
-    });
+      if (!node || !(id in data)) return;
 
-    ['employeePhone', 'officePhone'].forEach(id => {
+      if (node.multiple && Array.isArray(data[id])) {
+        Array.from(node.options).forEach(option => {
+          option.selected = data[id].includes(option.value);
+        });
+      } else if (node.type === 'checkbox') {
+        node.checked = !!data[id];
+      } else {
+        node.value = data[id];
+      }
+    });
+	
+	if (Array.isArray(data.registrationStates)) {
+  document.querySelectorAll('input[name="registrationStates"]').forEach(box => {
+    box.checked = data.registrationStates.includes(box.value);
+  });
+}
+  } catch (err) {
+    // Ignore invalid local storage.
+  }
+}
+
+function resetDefaults() {
+  ids.forEach(id => {
+    const node = el(id);
+    if (!node) return;
+
+    if (node.multiple) {
+      Array.from(node.options).forEach(option => {
+        option.selected = false;
+      });
+    } else if (node.type === 'checkbox') {
+      node.checked = node.dataset.default === 'checked';
+    } else {
+      node.value = node.dataset.default || '';
+    }
+  });
+
+  document.querySelectorAll('input[name="registrationStates"]').forEach(box => {
+    box.checked = false;
+  });
+
+  localStorage.removeItem('domeEmailSignatureGenerator');
+  render();
+  setStatus('Defaults restored.');
+}
+
+    ids.forEach(id => {
+	  const node = el(id);
+	  if (!node) return;
+
+	  node.addEventListener('input', () => {
+		updateOfficeFieldVisibility();
+		render();
+	  });
+
+	  node.addEventListener('change', () => {
+		updateOfficeFieldVisibility();
+		render();
+	  });
+	});
+
+	document.querySelectorAll('input[name="registrationStates"]').forEach(box => {
+	  box.addEventListener('change', render);
+	});
+
+    ['employeePhone'].forEach(id => {
       const node = el(id);
       if (!node) return;
       node.addEventListener('blur', () => { normalizePhoneField(id); render(); });
     });
 
-    // el('applyImageBase').addEventListener('click', applyImageBase);
-	if (el('applyImageBase')) {
-  el('applyImageBase').addEventListener('click', applyImageBase);
-}
     el('copyFormatted').addEventListener('click', copyFormatted);
     el('copyHtml').addEventListener('click', () => copyText(buildSignatureHtml(), 'HTML'));
     el('copyPlain').addEventListener('click', () => copyText(buildPlainText(), 'Plain text'));
     el('reset').addEventListener('click', resetDefaults);
 
-    loadState();
-    if (!value('companyLinkedIn')) el('companyLinkedIn').value = el('companyLinkedIn').dataset.default || '';
-    ['employeePhone', 'officePhone'].forEach(normalizePhoneField);
-    render();
+	loadState();
+	updateOfficeFieldVisibility();
+	['employeePhone'].forEach(normalizePhoneField);
+	render();
   </script>
 </body>
 </html>
