@@ -267,7 +267,6 @@
       <h2 id="form-heading">Signature information</h2>
       <div class="panel-body">
         <fieldset>
-          <legend>Employee</legend>
 		  <label for="officeLocation">Office location</label>
 			<select id="officeLocation" data-default="idahoFalls">
 			  <option value="idahoFalls">Idaho Falls, Idaho</option>
@@ -379,24 +378,27 @@
 
           <label for="employeeLinkedIn">Employee LinkedIn URL</label>
           <input id="employeeLinkedIn" placeholder="https://www.linkedin.com/in/..." data-default="">
-        </fieldset>
-
-
-		<fieldset>
-          <legend>Company</legend>
-
-
-
-
+		  <label for="tagline">Tagline</label>
+			<input id="tagline" placeholder="Optional tagline" data-default="">
+			<p class="hint">Optional. Appears below the employee contact information.</p>
         </fieldset>
 
         <fieldset>
-          <legend>Legal notice</legend>
-          <div class="check-row">
-            <input id="includeDisclaimer" type="checkbox" checked data-default="checked">
-            <label for="includeDisclaimer" style="margin:0;">Include confidentiality notice and disclaimer</label>
-          </div>
-        </fieldset>
+  <legend>Signature options</legend>
+
+  <label for="logoChoice">Logo</label>
+  <select id="logoChoice" data-default="standard">
+    <option value="standard">Standard logo</option>
+    <option value="anniversary50">50th anniversary logo</option>
+    <option value="monthly">Logo of the month</option>
+  </select>
+  <p class="hint">Logo options use hosted image URLs.</p>
+
+  <div class="check-row">
+    <input id="includeDisclaimer" type="checkbox" checked data-default="checked">
+    <label for="includeDisclaimer" style="margin:0;">Include confidentiality notice and disclaimer</label>
+  </div>
+</fieldset>
       </div>
     </section>
 
@@ -432,9 +434,9 @@
 
   <script>
 const ids = [
-  'signoff','fullName','title','employeePhoneLabel','employeePhone','employeeEmail','employeeLinkedIn',
+  'officeLocation','signoff','fullName','title','employeePhoneLabel','employeePhone','employeeEmail','employeeLinkedIn','tagline',
   'officePhone','address1','address2','country',
-  'includeDisclaimer','officeLocation'
+  'logoChoice','includeDisclaimer'
 ];
 
     const BRAND = {
@@ -447,12 +449,20 @@ const ids = [
 	
 const COMPANY_ASSETS = {
   companyName: 'Dome Technology',
-  logoUrl: 'https://zanestoy.github.io/sturdy-telegram/assets/logo.png',
+  logoUrls: {
+    standard: 'https://zanestoy.github.io/sturdy-telegram/assets/logo.png',
+    anniversary50: 'https://zanestoy.github.io/sturdy-telegram/assets/logo-50th-anniversary.png',
+    monthly: 'https://zanestoy.github.io/sturdy-telegram/assets/logo-month.png'
+  },
+  logoWidths: {
+    standard: 240,
+    anniversary50: 400,
+    monthly: 240
+  },
   linkedInIconUrl: 'https://zanestoy.github.io/sturdy-telegram/assets/LinkedIn.png',
   companyLinkedInUrl: 'https://www.linkedin.com/company/dome-technology-llp',
   websiteText: 'dometechnology.com',
   websiteUrl: 'https://www.dometechnology.com/',
-  logoWidth: 240,
   mainFontSize: 12,
   confidentialityText: `CONFIDENTIALITY NOTICE – This message (including any attachments) may contain confidential, proprietary, privileged and/or private information. The information is intended to be for the use of the individual or entity designated above. If you are not the intended recipient of this message, please notify the sender immediately, and delete the message and any attachments. Any disclosure, reproduction, distribution or other use of this message or any attachments by an individual or entity other than the intended recipient is prohibited.`,
   disclaimerText: `DISCLAIMER – The accompanying files are supplied as a matter of courtesy and are in no way to be taken as appurtenant to, associated with or as a replacement of copies of the officially sealed documents, unless noted as such. The data is provided "as is" without warranty of any kind either expressed or implied. Any person(s) or organization(s) making use of or relying upon this data, is responsible for confirming its accuracy and completeness. These files may not include a professional surveyor's/engineer's stamp and only drawings with such stamp are to be considered as true and final. Dome Technology is not responsible for edited or reproduced versions of this digital data.`
@@ -618,9 +628,24 @@ function registrationText() {
       return `<img src="${attrEscape(url)}" alt="${attrEscape(alt)}" width="${w}" style="border:0; width:${w}px; max-width:${w}px; height:auto; display:block; ${style}">`;
     }
 
-    function logoBlock() {
-  return imageHtml(COMPANY_ASSETS.logoUrl, 'Dome Technology', COMPANY_ASSETS.logoWidth, 'margin:0 0 10px 0;');
-}
+    function selectedLogoUrl() {
+	  const choice = value('logoChoice') || 'standard';
+	  return COMPANY_ASSETS.logoUrls[choice] || COMPANY_ASSETS.logoUrls.standard;
+	}
+
+	function selectedLogoUrl() {
+		  const choice = value('logoChoice') || 'standard';
+		  return COMPANY_ASSETS.logoUrls[choice] || COMPANY_ASSETS.logoUrls.standard;
+		}
+
+		function selectedLogoWidth() {
+		  const choice = value('logoChoice') || 'standard';
+		  return COMPANY_ASSETS.logoWidths[choice] || COMPANY_ASSETS.logoWidths.standard;
+		}
+
+		function logoBlock() {
+		  return imageHtml(selectedLogoUrl(), 'Dome Technology', selectedLogoWidth(), 'margin:0 0 10px 0;');
+		}
 
 	function cleanEmail(input) {
   return String(input || '')
@@ -711,6 +736,11 @@ const smallFontSize = Math.max(7, mainFontSize - 3);
       const employeeLinkedInHtml = employeeLinkedIn ? ` <span style="color:${BRAND.silver};">|</span> ${linkedInLink(employeeLinkedIn, linkedInIconUrl)}` : '';
       const companyLinkedInHtml = companyLinkedIn ? ` <span style="color:${BRAND.silver};">|</span> ${linkedInLink(companyLinkedIn, linkedInIconUrl)}` : '';
       const signoffHtml = signoff ? `<tr><td style="padding:0 0 8px 0; color:${BRAND.text}; font-family:Avenir, Aptos, Arial, sans-serif; font-size:${mainFontSize}pt; line-height:1.25;">${htmlEscape(signoff)}</td></tr>` : '';
+	  
+	  const taglineHtml = value('tagline') ? `
+		  <tr><td style="padding:0 0 9px 0; font-family:Avenir, Aptos, Arial, sans-serif; font-size:${mainFontSize}pt; line-height:1.25; color:${BRAND.muted}; font-style:italic;">
+			${htmlEscape(value('tagline'))}
+		  </td></tr>` : '';
 
       const disclaimerHtml = includeDisclaimer ? `
         <tr><td style="padding:14px 0 0 0;">
@@ -757,6 +787,7 @@ const smallFontSize = Math.max(7, mainFontSize - 3);
         ${linkHtml(`mailto:${employeeEmail}`, employeeEmail, `color:${BRAND.text};`)}
       </td>
     </tr>
+	${taglineHtml}
     <tr>
       <td style="padding:0; font-family:Avenir, Aptos, Arial, sans-serif; font-size:${smallFontSize}pt; line-height:1.35; color:${BRAND.text};">
         <strong style="font-weight:700;">${htmlEscape(companyName)}</strong>
@@ -777,10 +808,15 @@ const smallFontSize = Math.max(7, mainFontSize - 3);
       const lines = [];
       if (value('signoff')) lines.push(value('signoff'));
       lines.push(`${textOrPlaceholder('fullName', 'Full Name, Credentials')} | ${textOrPlaceholder('title', 'Title')}`);
-      if (value('employeeLinkedIn')) lines.push(`LinkedIn: ${value('employeeLinkedIn')}`);
-      lines.push(`${value('employeePhoneLabel') || 'Phone'}: ${phoneDisplay('employeePhone', '+1 xxx xxx xxxx')}`);
-      lines.push(employeeEmailAddress());
-      lines.push('');
+if (value('employeeLinkedIn')) lines.push(`LinkedIn: ${value('employeeLinkedIn')}`);
+lines.push(`${value('employeePhoneLabel') || 'Phone'}: ${phoneDisplay('employeePhone', '+1 xxx xxx xxxx')}`);
+lines.push(employeeEmailAddress());
+
+if (value('tagline')) {
+  lines.push(value('tagline'));
+}
+
+lines.push('');
       const office = selectedOffice();
 	  lines.push(`${COMPANY_ASSETS.companyName} | Office ${office.phone} | ${office.address1}`);
 lines.push(`${office.address2} | ${office.country} | visit ${COMPANY_ASSETS.websiteUrl}`);
