@@ -440,7 +440,7 @@
   </select>
   <p class="hint">Logo options use hosted image URLs.</p>
 
-  <div class="check-row"> <!--These lines need to be checked-->
+  <div class="check-row">
     <input id="includeDigitalCard" type="checkbox" data-default="">
     <label for="includeDigitalCard" style="margin:0;">Include digital business card link</label>
   </div>
@@ -482,6 +482,11 @@
         <div class="output">
           <label for="vcfOutput">Generated VCF</label>
           <textarea id="vcfOutput" readonly></textarea>
+        </div>
+        
+        <div class="output">
+          <label for="digitalCardOutput">Generated digital card HTML</label>
+          <textarea id="digitalCardOutput" readonly></textarea>
         </div>
 
         <details>
@@ -654,21 +659,24 @@ function registrationText() {
     }
 
     function validatePhoneFields() {
-  const issues = [];
+      const issues = [];
 
-  if (value('employeePhone') && !isCompletePhone(value('employeePhone'))) {
-    issues.push('Employee phone must use +X XXX XXX XXXX.');
-  }
+      if (value('employeePhone') && !isCompletePhone(value('employeePhone'))) {
+        issues.push('Employee phone must use +X XXX XXX XXXX.');
+      }
 
-  if (value('officeLocation') === 'custom' && value('officePhone') && !isCompletePhone(value('officePhone'))) {
-    issues.push('Custom office phone must use +X XXX XXX XXXX.');
-  }
+      if (value('officeLocation') === 'custom' && value('officePhone')) {
+        const digits = String(value('officePhone')).replace(/\D/g, '');
+        if (digits.length < 7) {
+          issues.push('Custom office phone needs enough digits to create a phone link.');
+        }
+      }
 
-  return issues;
-}
+      return issues;
+    }
 
     function prepareForCopy() {
-      ['employeePhone', 'officePhone'].forEach(normalizePhoneField);
+      ['employeePhone'].forEach(normalizePhoneField);
       const issues = validatePhoneFields();
       render();
       if (issues.length) {
@@ -1073,18 +1081,126 @@ function downloadVCard() {
   setStatus('VCF contact card downloaded.');
 }
 
+function buildDigitalCardHtml() {
+  const fullName = displayName() || 'Dome Technology Contact';
+  const title = textOrPlaceholder('title', 'Title');
+  const office = selectedOffice();
+  const employeePhone = phoneDisplay('employeePhone', '+1 xxx xxx xxxx');
+  const email = employeeEmailAddress();
+  const tagline = value('tagline');
+  const registration = registrationText();
+  const vcfFile = vcfFileName();
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${htmlEscape(fullName)} | Dome Technology</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 32px;
+      background: #f6f8fb;
+      color: #111827;
+      font-family: Avenir, Aptos, Arial, sans-serif;
+      line-height: 1.4;
+    }
+    .card {
+      max-width: 640px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #d9dee8;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+    img.logo {
+      width: ${selectedLogoWidth()}px;
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 0 18px 0;
+    }
+    h1 {
+      margin: 0;
+      color: #003366;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+    .title {
+      margin: 6px 0 18px;
+      color: #4b5563;
+      font-size: 16px;
+    }
+    .tagline {
+      margin: 0 0 18px;
+      color: #4b5563;
+      font-style: italic;
+    }
+    .links a {
+      display: block;
+      margin: 8px 0;
+      color: #003366;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .office {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid #d9dee8;
+      color: #4b5563;
+    }
+    .small {
+      margin-top: 18px;
+      color: #6b7280;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <img class="logo" src="${attrEscape(selectedLogoUrl())}" alt="Dome Technology">
+    <h1>${htmlEscape(fullName)}</h1>
+    <div class="title">${htmlEscape(title)}</div>
+    ${tagline ? `<p class="tagline">${htmlEscape(tagline)}</p>` : ''}
+
+    <div class="links">
+      <a href="mailto:${attrEscape(email)}">${htmlEscape(email)}</a>
+      <a href="${attrEscape(telHref(employeePhone))}">${htmlEscape(employeePhone)}</a>
+      ${value('employeeLinkedIn') ? `<a href="${attrEscape(value('employeeLinkedIn'))}">LinkedIn</a>` : ''}
+      <a href="${attrEscape(COMPANY_ASSETS.websiteUrl)}">${htmlEscape(COMPANY_ASSETS.websiteText)}</a>
+      <a href="../vcards/${attrEscape(vcfFile)}">Download contact card</a>
+    </div>
+
+    <div class="office">
+      <strong>${htmlEscape(COMPANY_ASSETS.companyName)}</strong><br>
+      Office ${htmlEscape(office.phone)}<br>
+      ${htmlEscape(office.address1)}<br>
+      ${htmlEscape(office.address2)} | ${htmlEscape(office.country)}
+    </div>
+
+    ${registration ? `<div class="small">Professional registration: ${htmlEscape(registration)}</div>` : ''}
+  </main>
+</body>
+</html>`;
+}
+
+
     function render() {
       const html = buildSignatureHtml();
       const plain = buildPlainText();
       const vcf = buildVCard();
+      const digitalCard = buildDigitalCardHtml();
 
       el('preview').innerHTML = html;
       el('htmlOutput').value = html;
       el('plainOutput').value = plain;
       el('vcfOutput').value = vcf;
+      el('digitalCardOutput').value = digitalCard;
 
-  saveState();
-}
+      saveState();
+    }
 
     async function copyText(text, label) {
       if (!prepareForCopy()) return;
