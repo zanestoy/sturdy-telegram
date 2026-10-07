@@ -277,16 +277,40 @@
 
 			<div id="customOfficeFields">
 			  <label for="officePhone">Office phone</label>
-			  <input id="officePhone" value="+1 208 529 0833" inputmode="tel" autocomplete="tel" pattern="^\+\d \d{3} \d{3} \d{4}$" maxlength="15" data-default="+1 208 529 0833">
+        <input id="officePhone" value="+1 208 529 0833" inputmode="tel" autocomplete="tel" data-default="+1 208 529 0833">
 
-			  <label for="address1">Office address</label>
-			  <input id="address1" value="4946 North 2900 East" data-default="4946 North 2900 East">
+        <label for="officeStreet">Street address</label>
+        <input id="officeStreet" value="4946 North 2900 East" data-default="4946 North 2900 East">
 
-			  <label for="address2">City / state / postal</label>
-			  <input id="address2" value="Idaho Falls Idaho 83401" data-default="Idaho Falls Idaho 83401">
+        <div class="grid-2">
+          <div>
+            <label for="officeCity">City</label>
+            <input id="officeCity" value="Idaho Falls" data-default="Idaho Falls">
+          </div>
+          <div>
+            <label for="officeRegion">State / region</label>
+            <input id="officeRegion" value="ID" data-default="ID">
+          </div>
+        </div>
 
-			  <label for="country">Country</label>
-			  <input id="country" value="USA" data-default="USA">
+        <div class="grid-2">
+          <div>
+            <label for="officePostalCode">Postal code</label>
+            <input id="officePostalCode" value="83401" data-default="83401">
+          </div>
+          <div>
+            <label for="officeCountry">Country</label>
+            <input id="officeCountry" value="USA" data-default="USA">
+          </div>
+        </div>
+
+        <label for="officeTimezone">Time zone</label>
+        <select id="officeTimezone" data-default="America/Boise">
+          <option value="">None / not specified</option>
+          <option value="America/Boise">America/Boise</option>
+          <option value="America/New_York">America/New_York</option>
+          <option value="Europe/Madrid">Europe/Madrid</option>
+        </select>
 			</div>
 		  
           <label for="signoff">Signoff line</label>
@@ -460,7 +484,7 @@
 const ids = [
   'officeLocation','signoff','namePrefix','firstName','middleName','lastName','nameSuffix','title',
   'employeePhoneLabel','employeePhone','employeeEmail','employeeLinkedIn','tagline',
-  'officePhone','address1','address2','country',
+  'officePhone','officeStreet','officeCity','officeRegion','officePostalCode','officeCountry','officeTimezone',
   'logoChoice','includeDisclaimer'
 ];
 
@@ -732,20 +756,23 @@ function selectedOffice() {
   const selected = value('officeLocation') || 'idahoFalls';
 
   if (selected === 'custom') {
-    const street = value('address1') || '4946 North 2900 East';
-    const cityRegionPostal = value('address2') || 'Idaho Falls Idaho 83401';
-    const country = value('country') || 'USA';
+    const street = value('officeStreet') || '4946 North 2900 East';
+    const city = value('officeCity') || 'Idaho Falls';
+    const region = value('officeRegion') || 'ID';
+    const postalCode = value('officePostalCode') || '83401';
+    const country = value('officeCountry') || 'USA';
+    const timezone = value('officeTimezone');
 
     return {
       phone: phoneDisplay('officePhone', '+1 208 529 0833'),
       street,
-      city: '',
-      region: '',
-      postalCode: '',
+      city,
+      region,
+      postalCode,
       country,
-      timezone: '',
+      timezone,
       address1: street,
-      address2: cityRegionPostal
+      address2: [city, region, postalCode].filter(Boolean).join(' ')
     };
   }
 
@@ -958,6 +985,9 @@ function buildVCard() {
   }
 
   lines.push(`ADR;TYPE=work:;;${vcfEscape(office.street)};${vcfEscape(office.city)};${vcfEscape(office.region)};${vcfEscape(office.postalCode)};${vcfEscape(office.country)}`);
+  if (office.timezone) {
+  lines.push(`TZ:${vcfEscape(office.timezone)}`);
+}
   lines.push(`URL;TYPE=work:${vcfEscape(COMPANY_ASSETS.websiteUrl)}`);
 
   if (value('employeeLinkedIn')) {
