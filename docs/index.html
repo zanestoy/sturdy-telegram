@@ -496,22 +496,31 @@ const COMPANY_ASSETS = {
 const OFFICES = {
   idahoFalls: {
     phone: '+1 208 529 0833',
-    address1: '4946 North 2900 East',
-    address2: 'Idaho Falls Idaho 83401',
-    country: 'USA'
+    street: '4946 North 2900 East',
+    city: 'Idaho Falls',
+    region: 'ID',
+    postalCode: '83401',
+    country: 'USA',
+    timezone: 'America/Boise'
   },
   atlanta: {
     phone: '+1 208 529 0833',
-    address1: '130 E Main Street, Suite 317',
-    address2: 'Canton, GA 30114',
-    country: 'United States of America'
+    street: '130 E Main Street, Suite 317',
+    city: 'Canton',
+    region: 'GA',
+    postalCode: '30114',
+    country: 'United States of America',
+    timezone: 'America/New_York'
   },
   european: {
-	phone: '+34 615 18 28 45',
-	address1: 'Marie Curie 7, Beta building, 7th floor, penthouse Nº4',
-	address2: '28521 Rivas Vaciamadrid',
-	country: 'Madrid, Spain'
-	}
+    phone: '+34 615 18 28 45',
+    street: 'Marie Curie 7, Beta building, 7th floor, penthouse Nº4',
+    city: 'Rivas Vaciamadrid',
+    region: 'Madrid',
+    postalCode: '28521',
+    country: 'Spain',
+    timezone: 'Europe/Madrid'
+  }
 };
 
 function selectedRegistrationStates() {
@@ -723,15 +732,30 @@ function selectedOffice() {
   const selected = value('officeLocation') || 'idahoFalls';
 
   if (selected === 'custom') {
+    const street = value('address1') || '4946 North 2900 East';
+    const cityRegionPostal = value('address2') || 'Idaho Falls Idaho 83401';
+    const country = value('country') || 'USA';
+
     return {
       phone: phoneDisplay('officePhone', '+1 208 529 0833'),
-      address1: value('address1') || '4946 North 2900 East',
-      address2: value('address2') || 'Idaho Falls Idaho 83401',
-      country: value('country') || 'USA'
+      street,
+      city: '',
+      region: '',
+      postalCode: '',
+      country,
+      timezone: '',
+      address1: street,
+      address2: cityRegionPostal
     };
   }
 
-  return OFFICES[selected] || OFFICES.idahoFalls;
+  const office = OFFICES[selected] || OFFICES.idahoFalls;
+
+  return {
+    ...office,
+    address1: office.street,
+    address2: [office.city, office.region, office.postalCode].filter(Boolean).join(' ')
+  };
 }
 
 function updateOfficeFieldVisibility() {
@@ -933,7 +957,7 @@ function buildVCard() {
     lines.push(`TEL;TYPE=work,voice:${officePhone}`);
   }
 
-  lines.push(`ADR;TYPE=work:;;${vcfEscape(office.address1)};${vcfEscape(office.address2)};;;${vcfEscape(office.country)}`);
+  lines.push(`ADR;TYPE=work:;;${vcfEscape(office.street)};${vcfEscape(office.city)};${vcfEscape(office.region)};${vcfEscape(office.postalCode)};${vcfEscape(office.country)}`);
   lines.push(`URL;TYPE=work:${vcfEscape(COMPANY_ASSETS.websiteUrl)}`);
 
   if (value('employeeLinkedIn')) {
