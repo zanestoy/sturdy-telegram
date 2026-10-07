@@ -948,14 +948,37 @@ function vcfTimestamp() {
 }
 
 function vcfFileName() {
-  const name = displayName() || 'Dome Technology Contact';
-  const safeName = name
+  const email = employeeEmailAddress();
+  const base = email && !email.includes('first.last')
+    ? email.split('@')[0]
+    : (displayName() || 'Dome Technology Contact');
+
+  const safeName = base
     .replace(/[,]/g, '')
     .replace(/[^a-zA-Z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .toLowerCase();
 
   return `${safeName || 'dome-technology-contact'}.vcf`;
+}
+
+function simpleHashUuid(input) {
+  const text = String(input || 'dome-technology-contact').toLowerCase().trim();
+  let hash1 = 0x811c9dc5;
+  let hash2 = 0x01000193;
+
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i);
+    hash1 ^= code;
+    hash1 = Math.imul(hash1, 0x01000193);
+    hash2 ^= code + i;
+    hash2 = Math.imul(hash2, 0x811c9dc5);
+  }
+
+  const hex = n => (n >>> 0).toString(16).padStart(8, '0');
+  const raw = `${hex(hash1)}${hex(hash2)}${hex(hash1 ^ hash2)}${hex(hash1 + hash2)}`.slice(0, 32);
+
+  return `${raw.slice(0, 8)}-${raw.slice(8, 12)}-4${raw.slice(13, 16)}-8${raw.slice(17, 20)}-${raw.slice(20, 32)}`;
 }
 
 function buildVCard() {
@@ -965,6 +988,7 @@ function buildVCard() {
   const employeePhone = vcfPhone(value('employeePhone'));
   const officePhone = vcfPhone(office.phone);
   const email = employeeEmailAddress();
+  const uid = `urn:uuid:${simpleHashUuid(email || fullName)}`;
   const noteParts = [];
 
   if (value('tagline')) noteParts.push(value('tagline'));
@@ -974,6 +998,7 @@ function buildVCard() {
     'BEGIN:VCARD',
     'VERSION:4.0',
     'KIND:individual',
+    `UID:${vcfEscape(uid)}`,
     `FN:${vcfEscape(fullName)}`,
     `N:${vcfEscape(name.last)};${vcfEscape(name.first)};${vcfEscape(name.middle)};${vcfEscape(name.prefix)};${vcfEscape(name.suffix)}`,
     `ORG:${vcfEscape(COMPANY_ASSETS.companyName)}`,
