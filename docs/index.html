@@ -294,8 +294,30 @@
 
 
 
-          <label for="fullName">Full name and credentials</label>
-          <input id="fullName" placeholder="Full Name" data-default="">
+          <div class="grid-2">
+  <div>
+    <label for="namePrefix">Prefix</label>
+    <input id="namePrefix" placeholder="Dr., Mr., Ms., etc." data-default="">
+  </div>
+  <div>
+    <label for="nameSuffix">Suffix / credentials</label>
+    <input id="nameSuffix" placeholder="P.E., S.E., Ph.D., etc." data-default="">
+  </div>
+</div>
+
+<div class="grid-2">
+  <div>
+    <label for="firstName">First name</label>
+    <input id="firstName" placeholder="First" data-default="">
+  </div>
+  <div>
+    <label for="middleName">Middle name / initial</label>
+    <input id="middleName" placeholder="Middle or initial" data-default="">
+  </div>
+</div>
+
+<label for="lastName">Last name</label>
+<input id="lastName" placeholder="Last" data-default="">
 
           <label for="title">Title</label>
           <input id="title" placeholder="Title" data-default="">
@@ -433,8 +455,10 @@
   </main>
 
   <script>
+
 const ids = [
-  'officeLocation','signoff','fullName','title','employeePhoneLabel','employeePhone','employeeEmail','employeeLinkedIn','tagline',
+  'officeLocation','signoff','namePrefix','firstName','middleName','lastName','nameSuffix','title',
+  'employeePhoneLabel','employeePhone','employeeEmail','employeeLinkedIn','tagline',
   'officePhone','address1','address2','country',
   'logoChoice','includeDisclaimer'
 ];
@@ -628,11 +652,6 @@ function registrationText() {
       return `<img src="${attrEscape(url)}" alt="${attrEscape(alt)}" width="${w}" style="border:0; width:${w}px; max-width:${w}px; height:auto; display:block; ${style}">`;
     }
 
-    function selectedLogoUrl() {
-	  const choice = value('logoChoice') || 'standard';
-	  return COMPANY_ASSETS.logoUrls[choice] || COMPANY_ASSETS.logoUrls.standard;
-	}
-
 	function selectedLogoUrl() {
 		  const choice = value('logoChoice') || 'standard';
 		  return COMPANY_ASSETS.logoUrls[choice] || COMPANY_ASSETS.logoUrls.standard;
@@ -646,6 +665,30 @@ function registrationText() {
 		function logoBlock() {
 		  return imageHtml(selectedLogoUrl(), 'Dome Technology', selectedLogoWidth(), 'margin:0 0 10px 0;');
 		}
+function displayName() {
+  const parts = [
+    value('namePrefix'),
+    value('firstName'),
+    value('middleName'),
+    value('lastName')
+  ].filter(Boolean);
+
+  const baseName = parts.join(' ');
+  const suffix = value('nameSuffix');
+
+  if (baseName && suffix) return `${baseName}, ${suffix}`;
+  return baseName || suffix || '';
+}
+
+function structuredNameParts() {
+  return {
+    prefix: value('namePrefix'),
+    first: value('firstName'),
+    middle: value('middleName'),
+    last: value('lastName'),
+    suffix: value('nameSuffix')
+  };
+}
 
 	function cleanEmail(input) {
   return String(input || '')
@@ -655,35 +698,25 @@ function registrationText() {
     .toLowerCase();
 }
 
-	function emailFromName(name) {
-	  const nameOnly = String(name || '')
-		.split(',')[0]
-		.normalize('NFD')
-		.replace(/[\u0300-\u036f]/g, '')
-		.replace(/[^a-zA-Z\s'-]/g, '')
-		.trim();
 
-	  const parts = nameOnly.split(/\s+/).filter(Boolean);
-	  if (parts.length < 2) return '';
+function employeeEmailAddress() {
+  const manual = cleanEmail(value('employeeEmail'));
 
-	  const first = parts[0].replace(/['-]/g, '').toLowerCase();
-	  const last = parts[parts.length - 1].replace(/['-]/g, '').toLowerCase();
+  // Manual override wins.
+  // Allows either "custom.name@dometechnology.com" or just "custom.name".
+  if (manual) {
+    return manual.includes('@') ? manual : `${manual}@dometechnology.com`;
+  }
 
-	  return `${first}.${last}@dometechnology.com`;
-	}
+  const first = cleanEmail(value('firstName'));
+  const last = cleanEmail(value('lastName'));
 
-	function employeeEmailAddress() {
-	  const manual = cleanEmail(value('employeeEmail'));
+  if (first && last) {
+    return `${first}.${last}@dometechnology.com`;
+  }
 
-	  // Manual override wins.
-	  // Allows either "custom.name@dometechnology.com" or just "custom.name".
-	  if (manual) {
-		return manual.includes('@') ? manual : `${manual}@dometechnology.com`;
-	  }
-
-	  // Blank field auto-generates from the full name.
-	  return emailFromName(value('fullName')) || 'first.last@dometechnology.com';
-	}
+  return 'first.last@dometechnology.com';
+}
 
 function selectedOffice() {
   const selected = value('officeLocation') || 'idahoFalls';
@@ -709,7 +742,7 @@ function updateOfficeFieldVisibility() {
 
     function buildSignatureHtml() {
       const signoff = value('signoff');
-      const fullName = textOrPlaceholder('fullName', 'Full Name, Credentials');
+      const displayFullName = displayName() || 'Full Name, Credentials';
 const registrationNoteText = registrationText();
 const registrationMarkerHtml = registrationNoteText ? '<sup style="font-size:7pt; line-height:0;">*</sup>' : '';
       const title = textOrPlaceholder('title', 'Title');
@@ -773,7 +806,7 @@ const smallFontSize = Math.max(7, mainFontSize - 3);
     <tr><td style="padding:0 0 7px 0;">${logoBlock()}</td></tr>
     <tr>
       <td style="padding:0; font-family:Avenir, Aptos, Arial, sans-serif; font-size:${mainFontSize}pt; line-height:1.25; color:${BRAND.text};">
-        <strong style="font-weight:700; color:${BRAND.text};">${htmlEscape(fullName)}${registrationMarkerHtml}</strong>
+        <strong style="font-weight:700; color:${BRAND.text};">${htmlEscape(displayFullName)}${registrationMarkerHtml}</strong>
         <span style="color:${BRAND.silver};"> | </span>${htmlEscape(title)}${employeeLinkedInHtml}
       </td>
     </tr>
@@ -807,7 +840,7 @@ const smallFontSize = Math.max(7, mainFontSize - 3);
     function buildPlainText() {
       const lines = [];
       if (value('signoff')) lines.push(value('signoff'));
-      lines.push(`${textOrPlaceholder('fullName', 'Full Name, Credentials')} | ${textOrPlaceholder('title', 'Title')}`);
+      lines.push(`${displayName() || 'Full Name, Credentials'} | ${textOrPlaceholder('title', 'Title')}`);
 if (value('employeeLinkedIn')) lines.push(`LinkedIn: ${value('employeeLinkedIn')}`);
 lines.push(`${value('employeePhoneLabel') || 'Phone'}: ${phoneDisplay('employeePhone', '+1 xxx xxx xxxx')}`);
 lines.push(employeeEmailAddress());
