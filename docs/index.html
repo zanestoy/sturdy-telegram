@@ -464,6 +464,11 @@
           <textarea id="plainOutput" readonly></textarea>
         </div>
 
+        <div class="output">
+          <label for="vcfOutput">Generated VCF</label>
+          <textarea id="vcfOutput" readonly></textarea>
+        </div>
+
         <details>
           <summary>Installation notes</summary>
           <p>For best results, use <strong>Copy formatted signature</strong> and paste into the email client's signature editor.</p>
@@ -1024,11 +1029,15 @@ function downloadVCard() {
     function render() {
       const html = buildSignatureHtml();
       const plain = buildPlainText();
+      const vcf = buildVCard();
+
       el('preview').innerHTML = html;
       el('htmlOutput').value = html;
       el('plainOutput').value = plain;
-      saveState();
-    }
+      el('vcfOutput').value = vcf;
+
+  saveState();
+}
 
     async function copyText(text, label) {
       if (!prepareForCopy()) return;
