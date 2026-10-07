@@ -440,6 +440,21 @@
   </select>
   <p class="hint">Logo options use hosted image URLs.</p>
 
+  <div class="check-row"> <!--These lines need to be checked-->
+    <input id="includeDigitalCard" type="checkbox" data-default="">
+    <label for="includeDigitalCard" style="margin:0;">Include digital business card link</label>
+  </div>
+
+  <label for="digitalCardText">Digital card link text</label>
+  <input id="digitalCardText" value="Digital business card" data-default="Digital business card">
+
+  <label for="digitalCardUrl">Digital business card URL</label>
+  <input id="digitalCardUrl" placeholder="https://.../cards/first-last.html" data-default="">
+
+  <label for="vcfSourceUrl">Hosted VCF source URL</label>
+  <input id="vcfSourceUrl" placeholder="https://.../vcards/first-last.vcf" data-default="">
+  <p class="hint">Optional. Used later when contact cards are hosted instead of only downloaded locally.</p>
+
   <div class="check-row">
     <input id="includeDisclaimer" type="checkbox" checked data-default="checked">
     <label for="includeDisclaimer" style="margin:0;">Include confidentiality notice and disclaimer</label>
@@ -490,7 +505,7 @@ const ids = [
   'officeLocation','signoff','namePrefix','firstName','middleName','lastName','nameSuffix','title',
   'employeePhoneLabel','employeePhone','employeeEmail','employeeLinkedIn','tagline',
   'officePhone','officeStreet','officeCity','officeRegion','officePostalCode','officeCountry','officeTimezone',
-  'logoChoice','includeDisclaimer'
+  'logoChoice','includeDigitalCard','digitalCardText','digitalCardUrl','vcfSourceUrl','includeDisclaimer'
 ];
 
     const BRAND = {
@@ -800,38 +815,38 @@ function updateOfficeFieldVisibility() {
     function buildSignatureHtml() {
       const signoff = value('signoff');
       const displayFullName = displayName() || 'Full Name, Credentials';
-const registrationNoteText = registrationText();
-const registrationMarkerHtml = registrationNoteText ? '<sup style="font-size:7pt; line-height:0;">*</sup>' : '';
+      const registrationNoteText = registrationText();
+      const registrationMarkerHtml = registrationNoteText ? '<sup style="font-size:7pt; line-height:0;">*</sup>' : '';
       const title = textOrPlaceholder('title', 'Title');
       const employeePhoneLabel = value('employeePhoneLabel') || 'Phone';
       const employeePhone = phoneDisplay('employeePhone', '+1 xxx xxx xxxx');
-	  const employeeEmail = employeeEmailAddress();
+	    const employeeEmail = employeeEmailAddress();
       const employeeLinkedIn = value('employeeLinkedIn');
       const companyName = COMPANY_ASSETS.companyName;
-const office = selectedOffice();
-const officePhone = office.phone;
-const address1 = office.address1;
-const address2 = office.address2;
-const country = office.country;
-const websiteText = COMPANY_ASSETS.websiteText;
-const websiteUrl = COMPANY_ASSETS.websiteUrl;
+      const office = selectedOffice();
+      const officePhone = office.phone;
+      const address1 = office.address1;
+      const address2 = office.address2;
+      const country = office.country;
+      const websiteText = COMPANY_ASSETS.websiteText;
+      const websiteUrl = COMPANY_ASSETS.websiteUrl;
       const companyLinkedIn = COMPANY_ASSETS.companyLinkedInUrl;
       const linkedInIconUrl = COMPANY_ASSETS.linkedInIconUrl;
-const includeDisclaimer = value('includeDisclaimer');
-const confidentialityText = COMPANY_ASSETS.confidentialityText;
-const disclaimerText = COMPANY_ASSETS.disclaimerText;
-const mainFontSize = COMPANY_ASSETS.mainFontSize;
-const smallFontSize = Math.max(7, mainFontSize - 3);
-
+      const includeDisclaimer = value('includeDisclaimer');
+      const confidentialityText = COMPANY_ASSETS.confidentialityText;
+      const disclaimerText = COMPANY_ASSETS.disclaimerText;
+      const mainFontSize = COMPANY_ASSETS.mainFontSize;
+      const smallFontSize = Math.max(7, mainFontSize - 3);
       const employeeLinkedInHtml = employeeLinkedIn ? ` <span style="color:${BRAND.silver};">|</span> ${linkedInLink(employeeLinkedIn, linkedInIconUrl)}` : '';
       const companyLinkedInHtml = companyLinkedIn ? ` <span style="color:${BRAND.silver};">|</span> ${linkedInLink(companyLinkedIn, linkedInIconUrl)}` : '';
+      const digitalCardHtml = value('includeDigitalCard') && value('digitalCardUrl')
+        ? ` <span style="color:${BRAND.silver};">|</span> ${linkHtml(value('digitalCardUrl'), value('digitalCardText') || 'Digital business card', `color:${BRAND.sea}; font-weight:700;`)}`
+        : '';
       const signoffHtml = signoff ? `<tr><td style="padding:0 0 8px 0; color:${BRAND.text}; font-family:Avenir, Aptos, Arial, sans-serif; font-size:${mainFontSize}pt; line-height:1.25;">${htmlEscape(signoff)}</td></tr>` : '';
-	  
-	  const taglineHtml = value('tagline') ? `
+	    const taglineHtml = value('tagline') ? `
 		  <tr><td style="padding:0 0 9px 0; font-family:Avenir, Aptos, Arial, sans-serif; font-size:${mainFontSize}pt; line-height:1.25; color:${BRAND.muted}; font-style:italic;">
 			${htmlEscape(value('tagline'))}
 		  </td></tr>` : '';
-
       const disclaimerHtml = includeDisclaimer ? `
         <tr><td style="padding:14px 0 0 0;">
           <div style="font-family:Avenir, Aptos, Arial, sans-serif; font-size:8pt; line-height:1.25; color:#5f6670; max-width:760px;">
@@ -840,20 +855,20 @@ const smallFontSize = Math.max(7, mainFontSize - 3);
           </div>
         </td></tr>` : '';
 		
-		const registrationNoteHtml = registrationNoteText ? `
-  <tr><td style="padding:8px 0 0 0;">
-    <div style="font-family:Avenir, Aptos, Arial, sans-serif; font-size:8pt; line-height:1.25; color:#5f6670; max-width:760px;">
-      *Professional registration: ${htmlEscape(registrationNoteText)}
-    </div>
-  </td></tr>` : '';
+		  const registrationNoteHtml = registrationNoteText ? `
+        <tr><td style="padding:8px 0 0 0;">
+          <div style="font-family:Avenir, Aptos, Arial, sans-serif; font-size:8pt; line-height:1.25; color:#5f6670; max-width:760px;">
+            *Professional registration: ${htmlEscape(registrationNoteText)}
+          </div>
+        </td></tr>` : '';
 		
-		const privacyPolicyHtml = `
-			<tr><td style="padding:12px 0 0 0;">
-				<div style="font-family:Avenir, Aptos, Arial, sans-serif; font-size:8pt; line-height:1.25; color:#5f6670; max-width:760px;">
-					By replying to this email, your personal data will be processed in accordance with our
-					${linkHtml('https://www.dometechnology.com/cookies-policy/', 'Privacy Policy', 'color:#003366; text-decoration:underline;')}.
-				</div>
-			</td></tr>`;
+		  const privacyPolicyHtml = `
+			  <tr><td style="padding:12px 0 0 0;">
+				  <div style="font-family:Avenir, Aptos, Arial, sans-serif; font-size:8pt; line-height:1.25; color:#5f6670; max-width:760px;">
+					  By replying to this email, your personal data will be processed in accordance with our
+				  	${linkHtml('https://www.dometechnology.com/cookies-policy/', 'Privacy Policy', 'color:#003366; text-decoration:underline;')}.
+				  </div>
+			  </td></tr>`;
 
       return `<!-- Dome Technology email signature -->
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; font-family:Avenir, Aptos, Arial, sans-serif; color:${BRAND.text};">
@@ -884,7 +899,7 @@ const smallFontSize = Math.max(7, mainFontSize - 3);
         <span style="color:${BRAND.silver};"> | </span>Office ${phoneLinkHtml(officePhone)}
         <span style="color:${BRAND.silver};"> | </span>${htmlEscape(address1)}<br>
         ${htmlEscape(address2)} <span style="color:${BRAND.silver};">|</span> ${htmlEscape(country)}
-        <span style="color:${BRAND.silver};"> | </span>visit ${linkHtml(websiteUrl, websiteText, `color:${BRAND.sea}; font-weight:700;`)}${companyLinkedInHtml}
+        <span style="color:${BRAND.silver};"> | </span>visit ${linkHtml(websiteUrl, websiteText, `color:${BRAND.sea}; font-weight:700;`)}${companyLinkedInHtml}${digitalCardHtml}
       </td>
     </tr>
 	${registrationNoteHtml}
@@ -911,6 +926,9 @@ lines.push('');
 	  lines.push(`${COMPANY_ASSETS.companyName} | Office ${office.phone} | ${office.address1}`);
 lines.push(`${office.address2} | ${office.country} | visit ${COMPANY_ASSETS.websiteUrl}`);
 lines.push(`Company LinkedIn: ${COMPANY_ASSETS.companyLinkedInUrl}`);
+if (value('includeDigitalCard') && value('digitalCardUrl')) {
+  lines.push(`${value('digitalCardText') || 'Digital business card'}: ${value('digitalCardUrl')}`);
+}
 
 const plainRegistrationText = registrationText();
 if (plainRegistrationText) {
@@ -1027,6 +1045,10 @@ function buildVCard() {
   if (noteParts.length) {
     lines.push(`NOTE:${vcfEscape(noteParts.join('\\n'))}`);
   }
+
+  if (value('vcfSourceUrl')) {
+  lines.push(`SOURCE:${vcfEscape(value('vcfSourceUrl'))}`);
+}
 
   lines.push(`REV:${vcfTimestamp()}`);
   lines.push('PRODID:-//Dome Technology//Email Signature Generator//EN');
