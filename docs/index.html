@@ -483,13 +483,7 @@
         <div id="preview" class="preview-card" aria-live="polite"></div>
           <p id="status" class="status"></p>
 
-          <h3 class="preview-subheading">Digital business card preview</h3>
-          <iframe
-            id="digitalCardPreview"
-            class="card-preview-frame"
-            title="Digital business card preview"
-            sandbox=""
-          ></iframe>
+          
 
         <div class="output">
           <label for="htmlOutput">Generated HTML</label>
@@ -516,13 +510,24 @@
           <p>For best results, use <strong>Copy formatted signature</strong> and paste into the email client's signature editor.</p>
         </details>
 		<div class="actions">
-		  <button id="copyFormatted" type="button">Copy formatted signature</button>
-		  <button id="copyHtml" class="secondary" type="button">Copy HTML</button>
-		  <button id="copyPlain" class="secondary" type="button">Copy plain text</button>
+      <button id="copyFormatted" type="button">Copy formatted signature</button>
+      <button id="copyHtml" class="secondary" type="button">Copy HTML</button>
+      <button id="copyPlain" class="secondary" type="button">Copy plain text</button>
       <button id="downloadVcf" class="secondary" type="button">Download VCF</button>
-		  <button id="reset" class="warning" type="button">Reset defaults</button>
-		</div>
+      <button id="copyDigitalCard" class="secondary" type="button">Copy digital card HTML</button>
+      <button id="downloadDigitalCard" class="secondary" type="button">Download digital card</button>
+      <button id="reset" class="warning" type="button">Reset defaults</button>
+    </div>
       </div>
+
+    <h3 class="preview-subheading">Digital business card preview</h3>
+          <iframe
+            id="digitalCardPreview"
+            class="card-preview-frame"
+            title="Digital business card preview"
+            sandbox=""
+          ></iframe>
+
     </section>
   </main>
 
@@ -1103,6 +1108,26 @@ function downloadVCard() {
   setStatus('VCF contact card downloaded.');
 }
 
+function digitalCardFileName() {
+  return vcfFileName().replace(/\.vcf$/i, '.html');
+}
+
+function downloadDigitalCard() {
+  const html = buildDigitalCardHtml();
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+
+  link.href = url;
+  link.download = digitalCardFileName();
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(url);
+  setStatus('Digital business card downloaded.');
+}
+
 function buildDigitalCardHtml() {
   const fullName = displayName() || 'Dome Technology Contact';
   const title = textOrPlaceholder('title', 'Title');
@@ -1378,6 +1403,8 @@ function resetDefaults() {
     el('copyHtml').addEventListener('click', () => copyText(buildSignatureHtml(), 'HTML'));
     el('copyPlain').addEventListener('click', () => copyText(buildPlainText(), 'Plain text'));
     el('downloadVcf').addEventListener('click', downloadVCard);
+    el('copyDigitalCard').addEventListener('click', () => copyText(buildDigitalCardHtml(), 'Digital card HTML'));
+    el('downloadDigitalCard').addEventListener('click', downloadDigitalCard);
     el('reset').addEventListener('click', resetDefaults);
 
 	loadState();
