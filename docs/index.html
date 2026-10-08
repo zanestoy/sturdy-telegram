@@ -1138,6 +1138,9 @@ function buildDigitalCardHtml() {
   const registration = registrationText();
   const vcfFile = vcfFileName();
 
+  const mainFontSize = COMPANY_ASSETS.mainFontSize;
+  const smallFontSize = Math.max(7, mainFontSize - 3);
+
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -1151,8 +1154,10 @@ function buildDigitalCardHtml() {
       background: #f6f8fb;
       color: #111827;
       font-family: Avenir, Aptos, Arial, sans-serif;
-      line-height: 1.4;
+      font-size: ${mainFontSize}pt;
+      line-height: 1.35;
     }
+
     .card {
       max-width: 640px;
       margin: 0 auto;
@@ -1162,54 +1167,76 @@ function buildDigitalCardHtml() {
       padding: 28px;
       box-shadow: 0 2px 8px rgba(0,0,0,.08);
     }
+
     img.logo {
       width: ${selectedLogoWidth()}px;
       max-width: 100%;
       height: auto;
       display: block;
-      margin: 0 0 18px 0;
+      margin: 0 0 10px 0;
     }
+
     h1 {
       margin: 0;
-      color: #003366;
-      font-size: 28px;
+      color: #111827;
+      font-size: ${mainFontSize + 3}pt;
       line-height: 1.2;
-    }
-    .title {
-      margin: 6px 0 18px;
-      color: #4b5563;
-      font-size: 16px;
-    }
-    .tagline {
-      margin: 0 0 18px;
-      color: #4b5563;
-      font-style: italic;
-    }
-    .links a {
-      display: block;
-      margin: 8px 0;
-      color: #003366;
-      text-decoration: none;
       font-weight: 700;
     }
-    .office {
-      margin-top: 18px;
-      padding-top: 18px;
-      border-top: 1px solid #d9dee8;
-      color: #4b5563;
+
+    .title {
+      margin: 4px 0 14px;
+      color: #111827;
+      font-size: ${mainFontSize}pt;
+      line-height: 1.25;
     }
+
+    .tagline {
+      margin: 0 0 14px;
+      color: #4b5563;
+      font-size: ${mainFontSize}pt;
+      line-height: 1.25;
+      font-style: italic;
+    }
+
+    .links {
+      margin: 0 0 14px;
+    }
+
+    .links a {
+      display: block;
+      margin: 5px 0;
+      color: #003366;
+      text-decoration: none;
+      font-size: ${mainFontSize}pt;
+      line-height: 1.25;
+      font-weight: 700;
+    }
+
+    .office {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #d9dee8;
+      color: #111827;
+      font-size: ${smallFontSize}pt;
+      line-height: 1.35;
+    }
+
     .small {
-      margin-top: 18px;
-      color: #6b7280;
-      font-size: 13px;
+      margin-top: 14px;
+      color: #5f6670;
+      font-size: ${smallFontSize}pt;
+      line-height: 1.35;
     }
   </style>
 </head>
 <body>
   <main class="card">
     <img class="logo" src="${attrEscape(selectedLogoUrl())}" alt="Dome Technology">
+
     <h1>${htmlEscape(fullName)}</h1>
     <div class="title">${htmlEscape(title)}</div>
+
     ${tagline ? `<p class="tagline">${htmlEscape(tagline)}</p>` : ''}
 
     <div class="links">
