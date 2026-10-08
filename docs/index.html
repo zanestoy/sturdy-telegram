@@ -893,7 +893,7 @@ function updateOfficeFieldVisibility() {
 		  const registrationNoteHtml = registrationNoteText ? `
         <tr><td style="padding:8px 0 0 0;">
           <div style="font-family:Avenir, Aptos, Arial, sans-serif; font-size:8pt; line-height:1.25; color:#5f6670; max-width:760px;">
-            *Professional registration: ${htmlEscape(registrationNoteText)}
+            *${htmlEscape(registrationNoteText)}
           </div>
         </td></tr>` : '';
 		
@@ -968,7 +968,7 @@ if (value('includeDigitalCard') && value('digitalCardUrl')) {
 const plainRegistrationText = registrationText();
 if (plainRegistrationText) {
   lines.push('');
-  lines.push(`*Professional registration: ${plainRegistrationText}`);
+  lines.push(`*${plainRegistrationText}`);
 }
 		lines.push('');
 		lines.push('By replying to this email, your personal data will be processed in accordance with our Privacy Policy: https://www.dometechnology.com/cookies-policy/');
@@ -1136,10 +1136,21 @@ function buildDigitalCardHtml() {
   const email = employeeEmailAddress();
   const tagline = value('tagline');
   const registration = registrationText();
+  const registrationMarkerHtml = registration ? '<sup>*</sup>' : '';
   const vcfFile = vcfFileName();
 
   const mainFontSize = COMPANY_ASSETS.mainFontSize;
   const smallFontSize = Math.max(7, mainFontSize - 3);
+
+  const employeeLinkedInCardHtml = value('employeeLinkedIn')
+    ? `<a class="icon-link" href="${attrEscape(value('employeeLinkedIn'))}" aria-label="Employee LinkedIn">
+         <img src="${attrEscape(COMPANY_ASSETS.linkedInIconUrl)}" alt="LinkedIn">
+       </a>`
+    : '';
+
+  const companyLinkedInCardHtml = COMPANY_ASSETS.companyLinkedInUrl
+    ? `<span class="sep">|</span><a href="${attrEscape(COMPANY_ASSETS.companyLinkedInUrl)}">LinkedIn</a>`
+    : '';
 
   return `<!doctype html>
 <html lang="en">
@@ -1176,6 +1187,14 @@ function buildDigitalCardHtml() {
       margin: 0 0 10px 0;
     }
 
+    .name-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 0;
+    }
+
     h1 {
       margin: 0;
       color: #111827;
@@ -1184,49 +1203,89 @@ function buildDigitalCardHtml() {
       font-weight: 700;
     }
 
+    sup {
+      font-size: 7pt;
+      line-height: 0;
+    }
+
     .title {
-      margin: 4px 0 14px;
+      margin: 4px 0 10px;
       color: #111827;
       font-size: ${mainFontSize}pt;
       line-height: 1.25;
     }
 
+    .icon-link {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .icon-link img {
+      width: 14px;
+      height: 14px;
+      border: 0;
+      display: inline-block;
+    }
+
+    .contact {
+      margin: 0 0 10px;
+    }
+
+    .contact a {
+      display: block;
+      margin: 4px 0;
+      color: #111827;
+      text-decoration: none;
+      font-size: ${mainFontSize}pt;
+      line-height: 1.25;
+    }
+
+    .registration {
+      margin: 8px 0 10px;
+      color: #5f6670;
+      font-size: ${smallFontSize}pt;
+      line-height: 1.35;
+    }
+
     .tagline {
-      margin: 0 0 14px;
+      margin: 0 0 12px;
       color: #4b5563;
       font-size: ${mainFontSize}pt;
       line-height: 1.25;
       font-style: italic;
     }
 
-    .links {
-      margin: 0 0 14px;
-    }
-
-    .links a {
-      display: block;
-      margin: 5px 0;
-      color: #003366;
-      text-decoration: none;
-      font-size: ${mainFontSize}pt;
-      line-height: 1.25;
-      font-weight: 700;
-    }
-
-    .office {
-      margin-top: 14px;
-      padding-top: 14px;
+    .company {
+      margin-top: 12px;
+      padding-top: 12px;
       border-top: 1px solid #d9dee8;
       color: #111827;
       font-size: ${smallFontSize}pt;
       line-height: 1.35;
     }
 
-    .small {
+    .company a {
+      color: #78bec9;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .sep {
+      color: #bfc0c1;
+      margin: 0 6px;
+    }
+
+    .download {
       margin-top: 14px;
-      color: #5f6670;
-      font-size: ${smallFontSize}pt;
-      line-height: 1.35;
+    }
+
+    .download a {
+      display: inline-block;
+      color: #003366;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: ${mainFontSize}pt;
     }
   </style>
 </head>
@@ -1234,27 +1293,33 @@ function buildDigitalCardHtml() {
   <main class="card">
     <img class="logo" src="${attrEscape(selectedLogoUrl())}" alt="Dome Technology">
 
-    <h1>${htmlEscape(fullName)}</h1>
+    <div class="name-row">
+      <h1>${htmlEscape(fullName)}${registrationMarkerHtml}</h1>
+      ${employeeLinkedInCardHtml}
+    </div>
+
     <div class="title">${htmlEscape(title)}</div>
+
+    <div class="contact">
+      <a href="${attrEscape(telHref(employeePhone))}">${htmlEscape(employeePhone)}</a>
+      <a href="mailto:${attrEscape(email)}">${htmlEscape(email)}</a>
+    </div>
+
+    ${registration ? `<div class="registration">*${htmlEscape(registration)}</div>` : ''}
 
     ${tagline ? `<p class="tagline">${htmlEscape(tagline)}</p>` : ''}
 
-    <div class="links">
-      <a href="mailto:${attrEscape(email)}">${htmlEscape(email)}</a>
-      <a href="${attrEscape(telHref(employeePhone))}">${htmlEscape(employeePhone)}</a>
-      ${value('employeeLinkedIn') ? `<a href="${attrEscape(value('employeeLinkedIn'))}">LinkedIn</a>` : ''}
-      <a href="${attrEscape(COMPANY_ASSETS.websiteUrl)}">${htmlEscape(COMPANY_ASSETS.websiteText)}</a>
-      <a href="../vcards/${attrEscape(vcfFile)}">Download contact card</a>
-    </div>
-
-    <div class="office">
+    <div class="company">
       <strong>${htmlEscape(COMPANY_ASSETS.companyName)}</strong><br>
       Office ${htmlEscape(office.phone)}<br>
+      <a href="${attrEscape(COMPANY_ASSETS.websiteUrl)}">${htmlEscape(COMPANY_ASSETS.websiteText)}</a>${companyLinkedInCardHtml}<br>
       ${htmlEscape(office.address1)}<br>
       ${htmlEscape(office.address2)} | ${htmlEscape(office.country)}
     </div>
 
-    ${registration ? `<div class="small">Professional registration: ${htmlEscape(registration)}</div>` : ''}
+    <div class="download">
+      <a href="../vcards/${attrEscape(vcfFile)}">Download contact card</a>
+    </div>
   </main>
 </body>
 </html>`;
