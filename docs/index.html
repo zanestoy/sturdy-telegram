@@ -469,6 +469,8 @@
   <input id="vcfSourceUrl" placeholder="https://.../vcards/first-last.vcf" data-default="">
   <p class="hint">Optional. Used later when contact cards are hosted instead of only downloaded locally.</p>
 
+  <button id="generateHostedPaths" class="secondary inline-button" type="button">Generate hosted paths</button>
+
   <div class="check-row">
     <input id="includeDisclaimer" type="checkbox" checked data-default="checked">
     <label for="includeDisclaimer" style="margin:0;">Include confidentiality notice and disclaimer</label>
@@ -1112,6 +1114,30 @@ function digitalCardFileName() {
   return vcfFileName().replace(/\.vcf$/i, '.html');
 }
 
+function hostedBaseUrl() {
+  return 'https://zanestoy.github.io/sturdy-telegram';
+}
+
+function hostedCardUrl() {
+  return `${hostedBaseUrl()}/cards/${digitalCardFileName()}`;
+}
+
+function hostedVcfUrl() {
+  return `${hostedBaseUrl()}/vcards/${vcfFileName()}`;
+}
+
+function generateHostedPaths() {
+  el('digitalCardUrl').value = hostedCardUrl();
+  el('vcfSourceUrl').value = hostedVcfUrl();
+
+  if (!value('includeDigitalCard')) {
+    el('includeDigitalCard').checked = true;
+  }
+
+  render();
+  setStatus('Hosted digital card and VCF paths generated.');
+}
+
 function downloadDigitalCard() {
   const html = buildDigitalCardHtml();
   const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
@@ -1497,6 +1523,7 @@ function resetDefaults() {
     el('downloadVcf').addEventListener('click', downloadVCard);
     el('copyDigitalCard').addEventListener('click', () => copyText(buildDigitalCardHtml(), 'Digital card HTML'));
     el('downloadDigitalCard').addEventListener('click', downloadDigitalCard);
+    el('generateHostedPaths').addEventListener('click', generateHostedPaths);
     el('reset').addEventListener('click', resetDefaults);
 
 	loadState();
