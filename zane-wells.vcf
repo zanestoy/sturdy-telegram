@@ -1,0 +1,20 @@
+BEGIN:VCARD
+VERSION:4.0
+KIND:individual
+UID:urn:uuid:a70064dc-4874-4ad2-8f74-2e0eef74afae
+FN:Mr. Zane Bradley Wells\, P.E.
+N:Wells;Zane;Bradley;Mr.;P.E.
+ORG:Dome Technology
+TITLE:Engineering Project Manager
+EMAIL;TYPE=work:zane.wells@dometechnology.com
+TEL;TYPE=work,voice:+14357201032
+TEL;TYPE=work,voice:+12085290833
+ADR;TYPE=work:;;4946 North 2900 East;Idaho Falls;ID;83401;USA
+TZ:America/Boise
+URL;TYPE=work:https://www.dometechnology.com/
+URL;TYPE=linkedin:https://www.linkedin.com/in/zanewells/
+NOTE:Discipline Equals Freedom - Jocko Willink\\nRegistered in CA\, IN
+SOURCE:https://zanestoy.github.io/sturdy-telegram/vcards/zane-wells.vcf
+REV:20261008T160131Z
+PRODID:-//Dome Technology//Email Signature Generator//EN
+END:VCARD
